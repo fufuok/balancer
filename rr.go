@@ -15,13 +15,13 @@ type rr struct {
 
 func NewRoundRobin(items ...[]string) (lb *rr) {
 	lb = &rr{}
-	if len(items) > 0 {
+	if len(items) > 0 && len(items[0]) > 0 {
 		lb.Update(items[0])
 	}
 	return
 }
 
-func (b *rr) Add(item string, _ int) {
+func (b *rr) Add(item string, _ ...int) {
 	b.Lock()
 	defer b.Unlock()
 

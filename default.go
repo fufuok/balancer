@@ -1,11 +1,11 @@
 package balancer
 
 // DefaultBalancer is an global balancer
-var DefaultBalancer = New(WeightedRoundRobin, nil)
+var DefaultBalancer = NewWeightedRoundRobin()
 
 // Add add an item to be selected.
-func Add(item string, weight int) {
-	DefaultBalancer.Add(item, weight)
+func Add(item string, weight ...int) {
+	DefaultBalancer.Add(item, weight...)
 }
 
 // All get all items.

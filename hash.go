@@ -19,17 +19,17 @@ type consistentHash struct {
 }
 
 func NewConsistentHash(items ...[]string) (lb *consistentHash) {
-	if len(items) == 0 {
-		return &consistentHash{
-			h: doublejump.NewHash(),
-		}
+	if len(items) > 0 && len(items[0]) > 0 {
+		lb = &consistentHash{}
+		lb.Update(items[0])
+		return
 	}
-	lb = &consistentHash{}
-	lb.Update(items[0])
-	return
+	return &consistentHash{
+		h: doublejump.NewHash(),
+	}
 }
 
-func (b *consistentHash) Add(item string, _ int) {
+func (b *consistentHash) Add(item string, _ ...int) {
 	b.Lock()
 	defer b.Unlock()
 

@@ -16,21 +16,21 @@ func main() {
 		"C": 1,
 		"D": 0,
 	}
-	lb = balancer.New(balancer.WeightedRoundRobin, wNodes)
+	lb = balancer.New(balancer.WeightedRoundRobin, wNodes, nil)
 	fmt.Println("balancer name:", lb.Name())
 
-	lb = balancer.New(balancer.SmoothWeightedRoundRobin, wNodes)
+	lb = balancer.New(balancer.SmoothWeightedRoundRobin, wNodes, nil)
 	fmt.Println("balancer name:", lb.Name())
 
 	// RoundRobin / Random / ConsistentHash use []string
 	nodes := []string{"A", "B", "C"}
-	lb = balancer.New(balancer.ConsistentHash, nodes)
+	lb = balancer.New(balancer.ConsistentHash, nil, nodes)
 	fmt.Println("balancer name:", lb.Name())
 
-	lb = balancer.New(balancer.Random, nodes)
+	lb = balancer.New(balancer.Random, nil, nodes)
 	fmt.Println("balancer name:", lb.Name())
 
-	lb = balancer.New(balancer.RoundRobin, nodes)
+	lb = balancer.New(balancer.RoundRobin, nil, nodes)
 	fmt.Println("balancer name:", lb.Name())
 
 	// result of RoundRobin: A B C A B C A
@@ -39,12 +39,12 @@ func main() {
 	}
 
 	// same effect
-	lb = balancer.New(balancer.SmoothWeightedRoundRobin, nil)
+	lb = balancer.New(balancer.SmoothWeightedRoundRobin, nil, nil)
 	lb.Add("A", 1)
 	lb.Select()
 
 	// or like this
-	lb = balancer.New(balancer.RoundRobin, nil)
+	lb = balancer.New(balancer.RoundRobin, nil, nil)
 	lb.Update(nodes)
 	lb.Select()
 }

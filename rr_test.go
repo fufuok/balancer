@@ -14,7 +14,7 @@ func TestRoundRobin(t *testing.T) {
 		t.Fatalf("rr expected empty, actual %s", item)
 	}
 
-	lb.Add("A", 0)
+	lb.Add("A")
 	item = lb.Select()
 	if item != "A" {
 		t.Fatalf("rr expected A, actual %s", item)
@@ -73,10 +73,10 @@ func TestRoundRobin(t *testing.T) {
 		t.Fatal("rr wrong")
 	}
 
-	lb.Add("A", 0)
-	lb.Add("A", 0)
-	lb.Add("C", 0)
-	lb.Add("A", 0)
+	lb.Add("A")
+	lb.Add("A")
+	lb.Add("C")
+	lb.Add("A")
 	all := lb.All().([]string)
 	if strings.Join(all, "") != "ABCDAACA" {
 		t.Fatalf("hash all() wrong")

@@ -80,10 +80,10 @@ nodes := []string{"A", "B", "C"}
 
    ```go
    var lb Balancer
-   lb = balancer.New(balancer.WeightedRoundRobin, wNodes)
+   lb = balancer.New(balancer.WeightedRoundRobin, wNodes, nil)
    
    // or
-   lb = balancer.New(balancer.WeightedRoundRobin, nil)
+   lb = balancer.New(balancer.WeightedRoundRobin, nil, nil)
    lb.Update(wNodes)
    
    // or
@@ -98,10 +98,10 @@ nodes := []string{"A", "B", "C"}
 
    ```go
    var lb Balancer
-   lb = balancer.New(balancer.SmoothWeightedRoundRobin, wNodes)
+   lb = balancer.New(balancer.SmoothWeightedRoundRobin, wNodes, nil)
    
    // or
-   lb = balancer.New(balancer.SmoothWeightedRoundRobin, nil)
+   lb = balancer.New(balancer.SmoothWeightedRoundRobin, nil, nil)
    lb.Update(wNodes)
    
    // or
@@ -116,10 +116,10 @@ nodes := []string{"A", "B", "C"}
 
    ```go
    var lb Balancer
-   lb = balancer.New(balancer.ConsistentHash, nodes)
+   lb = balancer.New(balancer.ConsistentHash, nil, nodes)
    
    // or
-   lb = balancer.New(balancer.ConsistentHash, nil)
+   lb = balancer.New(balancer.ConsistentHash, nil, nil)
    lb.Update(nodes)
    
    // or
@@ -134,10 +134,10 @@ nodes := []string{"A", "B", "C"}
 
    ```go
    var lb Balancer
-   lb = balancer.New(balancer.RoundRobin, nodes)
+   lb = balancer.New(balancer.RoundRobin, nil, nodes)
    
    // or
-   lb = balancer.New(balancer.RoundRobin, nil)
+   lb = balancer.New(balancer.RoundRobin, nil, nil)
    lb.Update(nodes)
    
    // or
@@ -152,10 +152,10 @@ nodes := []string{"A", "B", "C"}
 
    ```go
    var lb Balancer
-   lb = balancer.New(balancer.Random, nodes)
+   lb = balancer.New(balancer.Random, nil, nodes)
    
    // or
-   lb = balancer.New(balancer.Random, nil)
+   lb = balancer.New(balancer.Random, nil, nil)
    lb.Update(nodes)
    
    // or
@@ -184,7 +184,8 @@ node := lb.Select("192.168.1.100", "Test", "...")
 ```go
 type Balancer interface {
 	// Add add an item to be selected.
-	Add(item string, weight int)
+	// weight is only used for WeightedRoundRobin/SmoothWeightedRoundRobin, default: 1
+	Add(item string, weight ...int)
 
 	// All get all items.
 	// RoundRobin/Random/ConsistentHash: []string

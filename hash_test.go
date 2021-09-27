@@ -14,7 +14,7 @@ func TestConsistentHash(t *testing.T) {
 		t.Fatalf("hash expected empty, actual %s", item)
 	}
 
-	lb.Add("A", 0)
+	lb.Add("A")
 	item = lb.Select()
 	if item != "A" {
 		t.Fatalf("hash expected A, actual %s", item)
@@ -58,9 +58,9 @@ func TestConsistentHash(t *testing.T) {
 		}
 	}
 
-	lb.Add("E", 0)
-	lb.Add("C", 0)
-	lb.Add("E", 0)
+	lb.Add("E")
+	lb.Add("C")
+	lb.Add("E")
 	lb.Remove("B")
 	item = lb.Select("192.168.1.100")
 	if item != "A" {

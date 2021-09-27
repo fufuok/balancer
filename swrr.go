@@ -21,22 +21,26 @@ type swrrItems struct {
 }
 
 func NewSmoothWeightedRoundRobin(items ...map[string]int) (lb *swrr) {
-	if len(items) == 0 {
-		return &swrr{
-			all: make(map[string]int),
-		}
+	if len(items) > 0 && len(items[0]) > 0 {
+		lb = &swrr{}
+		lb.Update(items[0])
+		return
 	}
-	lb = &swrr{}
-	lb.Update(items[0])
-	return
+	return &swrr{
+		all: make(map[string]int),
+	}
 }
 
-func (b *swrr) Add(item string, weight int) {
+func (b *swrr) Add(item string, weight ...int) {
 	b.Lock()
 	defer b.Unlock()
 
-	b.add(item, weight)
-	b.all[item] = weight
+	w := 1
+	if len(weight) > 0 {
+		w = weight[0]
+	}
+	b.add(item, w)
+	b.all[item] = w
 }
 
 func (b *swrr) add(item string, weight int) {

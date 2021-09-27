@@ -19,7 +19,7 @@ func main() {
 	fmt.Println()
 
 	// add an item to be selected
-	lb.Add("E", 0)
+	lb.Add("E")
 	fmt.Println(lb.Select())
 
 	// get all items

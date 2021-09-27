@@ -18,13 +18,13 @@ func NewRandom(items ...[]string) (lb *random) {
 	lb = &random{
 		r: rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
-	if len(items) > 0 {
+	if len(items) > 0 && len(items[0]) > 0 {
 		lb.Update(items[0])
 	}
 	return
 }
 
-func (b *random) Add(item string, _ int) {
+func (b *random) Add(item string, _ ...int) {
 	b.Lock()
 	defer b.Unlock()
 

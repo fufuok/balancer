@@ -14,7 +14,7 @@ func TestRandom(t *testing.T) {
 		t.Fatalf("r expected empty, actual %s", item)
 	}
 
-	lb.Add("A", 0)
+	lb.Add("A")
 	item = lb.Select()
 	if item != "A" {
 		t.Fatalf("r expected A, actual %s", item)
@@ -34,10 +34,10 @@ func TestRandom(t *testing.T) {
 		t.Fatal("r wrong")
 	}
 
-	lb.Add("A", 0)
-	lb.Add("A", 0)
-	lb.Add("C", 0)
-	lb.Add("A", 0)
+	lb.Add("A")
+	lb.Add("A")
+	lb.Add("C")
+	lb.Add("A")
 	all := lb.All().([]string)
 	if strings.Join(all, "") != "ABCDAACA" {
 		t.Fatalf("hash all() wrong")

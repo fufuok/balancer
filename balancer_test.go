@@ -5,27 +5,27 @@ import (
 )
 
 func TestBalancer(t *testing.T) {
-	lb := New(WeightedRoundRobin, nil)
+	lb := New(WeightedRoundRobin, nil, nil)
 	if lb.Name() != "WeightedRoundRobin" {
 		t.Fatal("balancer.New wrong")
 	}
 
-	lb = New(SmoothWeightedRoundRobin, nil)
+	lb = New(SmoothWeightedRoundRobin, nil, nil)
 	if lb.Name() != "SmoothWeightedRoundRobin" {
 		t.Fatal("balancer.New wrong")
 	}
 
-	lb = New(ConsistentHash, nil)
+	lb = New(ConsistentHash, nil, nil)
 	if lb.Name() != "ConsistentHash" {
 		t.Fatal("balancer.New wrong")
 	}
 
-	lb = New(RoundRobin, nil)
+	lb = New(RoundRobin, nil, nil)
 	if lb.Name() != "RoundRobin" {
 		t.Fatal("balancer.New wrong")
 	}
 
-	lb = New(Random, nil)
+	lb = New(Random, nil, nil)
 	if lb.Name() != "Random" {
 		t.Fatal("balancer.New wrong")
 	}

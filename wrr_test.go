@@ -23,6 +23,10 @@ func TestWeightedRoundRobin(t *testing.T) {
 	if item != "B" {
 		t.Fatalf("wrr expected B, actual %s", item)
 	}
+	item = lb.Select("test")
+	if item != "B" {
+		t.Fatalf("wrr expected B, actual %s", item)
+	}
 
 	nodes := map[string]int{
 		"A": 0,

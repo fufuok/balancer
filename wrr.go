@@ -24,22 +24,26 @@ type wrrItems struct {
 }
 
 func NewWeightedRoundRobin(items ...map[string]int) (lb *wrr) {
-	if len(items) == 0 {
-		return &wrr{
-			all: make(map[string]int),
-		}
+	if len(items) > 0 && len(items[0]) > 0 {
+		lb = &wrr{}
+		lb.Update(items[0])
+		return
 	}
-	lb = &wrr{}
-	lb.Update(items[0])
-	return
+	return &wrr{
+		all: make(map[string]int),
+	}
 }
 
-func (b *wrr) Add(item string, weight int) {
+func (b *wrr) Add(item string, weight ...int) {
 	b.Lock()
 	defer b.Unlock()
 
-	b.add(item, weight)
-	b.all[item] = weight
+	w := 1
+	if len(weight) > 0 {
+		w = weight[0]
+	}
+	b.add(item, w)
+	b.all[item] = w
 }
 
 func (b *wrr) add(item string, weight int) {
