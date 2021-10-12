@@ -1,7 +1,6 @@
 package balancer
 
 import (
-	"hash/fnv"
 	"sync"
 
 	"github.com/fufuok/balancer/internal/utils"
@@ -17,6 +16,12 @@ type consistentHash struct {
 
 	sync.RWMutex
 }
+
+const (
+	// FNVa offset basis. See https://en.wikipedia.org/wiki/Fowler–Noll–Vo_hash_function#FNV-1a_hash
+	offset64 = 14695981039346656037
+	prime64  = 1099511628211
+)
 
 func NewConsistentHash(items ...[]string) (lb *consistentHash) {
 	if len(items) > 0 && len(items[0]) > 0 {
@@ -71,9 +76,12 @@ func (b *consistentHash) chooseNext(key []string) (choice string) {
 }
 
 func (b *consistentHash) hash(s string) uint64 {
-	h := fnv.New64a()
-	_, _ = h.Write([]byte(s))
-	return h.Sum64()
+	var h uint64 = offset64
+	for i := 0; i < len(s); i++ {
+		h ^= uint64(s[i])
+		h *= prime64
+	}
+	return h
 }
 
 func (b *consistentHash) Remove(item string, asClean ...bool) (ok bool) {
