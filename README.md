@@ -1,4 +1,4 @@
-# load balancing algorithm library
+# 💡 load balancing algorithm library
 
 Goroutine-safe, High-performance general load balancing algorithm library.
 
@@ -6,7 +6,7 @@ Smooth weighted load balancing algorithm: [NGINX](https://github.com/phusion/ngi
 
 Doublejump provides a revamped Google's jump consistent hash.
 
-## Features
+## 🎯 Features
 
 - WeightedRoundRobin
 - SmoothWeightedRoundRobin
@@ -14,13 +14,13 @@ Doublejump provides a revamped Google's jump consistent hash.
 - RoundRobin
 - Random
 
-## Installation
+## ⚙️ Installation
 
 ```go
 go get -u github.com/fufuok/balancer
 ```
 
-## Quickstart
+## ⚡️ Quickstart
 
 ```go
 package main
@@ -33,21 +33,21 @@ import (
 
 func main() {
 	wNodes := map[string]int{
-		"A": 5,
-		"B": 3,
-		"C": 1,
-		"D": 0,
+		"🍒": 5,
+		"🍋": 3,
+		"🍉": 1,
+		"🥑": 0,
 	}
 	balancer.Update(wNodes)
 
-	// result of smooth selection is similar to: A A A B A B C A B
+	// result of smooth selection is similar to: 🍒 🍒 🍒 🍋 🍒 🍋 🍒 🍋 🍉
 	for i := 0; i < 9; i++ {
 		fmt.Print(balancer.Select(), " ")
 	}
 }
 ```
 
-## Examples
+## 📖 Examples
 
 please visit: [example](example)
 
@@ -216,7 +216,7 @@ type Balancer interface {
 }
 ```
 
-## Benchmark
+## 🤖 Benchmark
 
 ```shell
 go test -bench=. -benchtime=1s -count=2
@@ -236,7 +236,7 @@ BenchmarkRandomR-4                      47053610                32.63 ns/op     
 BenchmarkRandomR-4                      46210752                25.15 ns/op            0 B/op          0 allocs/op
 ```
 
-## License
+## ⚠️ License
 
 Third-party library licenses:
 
