@@ -65,18 +65,18 @@ func BenchmarkRandomR(b *testing.B) {
 	}
 }
 
-// go test -bench=. -benchtime=1s -count=2
+// go test -run=^$ -bench=. -benchtime=1s -count=2
 // goos: linux
 // goarch: amd64
 // pkg: github.com/fufuok/balancer
 // cpu: Intel(R) Xeon(R) CPU E5-2667 v2 @ 3.30GHz
-// BenchmarkWeightedRoundRobin-4           30947391                37.95 ns/op            0 B/op          0 allocs/op
-// BenchmarkWeightedRoundRobin-4           30508263                48.99 ns/op            0 B/op          0 allocs/op
-// BenchmarkSmoothWeightedRoundRobin-4     20379349                60.12 ns/op            0 B/op          0 allocs/op
-// BenchmarkSmoothWeightedRoundRobin-4     20407590                75.66 ns/op            0 B/op          0 allocs/op
-// BenchmarkConsistentHash-4               33911062                44.45 ns/op            0 B/op          0 allocs/op
-// BenchmarkConsistentHash-4               34818607                44.34 ns/op            0 B/op          0 allocs/op
-// BenchmarkRoundRobin-4                   51605906                23.35 ns/op            0 B/op          0 allocs/op
-// BenchmarkRoundRobin-4                   50344368                29.87 ns/op            0 B/op          0 allocs/op
-// BenchmarkRandomR-4                      45422324                26.06 ns/op            0 B/op          0 allocs/op
-// BenchmarkRandomR-4                      46060688                32.93 ns/op            0 B/op          0 allocs/op
+// BenchmarkWeightedRoundRobin-4           31541454                37.92 ns/op            0 B/op          0 allocs/op
+// BenchmarkWeightedRoundRobin-4           30563991                49.22 ns/op            0 B/op          0 allocs/op
+// BenchmarkSmoothWeightedRoundRobin-4     20565193                58.03 ns/op            0 B/op          0 allocs/op
+// BenchmarkSmoothWeightedRoundRobin-4     20774737                57.12 ns/op            0 B/op          0 allocs/op
+// BenchmarkConsistentHash-4               33287440                35.11 ns/op            0 B/op          0 allocs/op
+// BenchmarkConsistentHash-4               33085503                35.03 ns/op            0 B/op          0 allocs/op
+// BenchmarkRoundRobin-4                   51950608                35.87 ns/op            0 B/op          0 allocs/op
+// BenchmarkRoundRobin-4                   51404785                22.90 ns/op            0 B/op          0 allocs/op
+// BenchmarkRandomR-4                      55436377                21.16 ns/op            0 B/op          0 allocs/op
+// BenchmarkRandomR-4                      55588168                21.13 ns/op            0 B/op          0 allocs/op

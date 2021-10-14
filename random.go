@@ -1,23 +1,20 @@
 package balancer
 
 import (
-	"math/rand"
 	"sync"
-	"time"
+
+	"github.com/fufuok/balancer/utils"
 )
 
 type random struct {
 	items []string
-	count int
-	r     *rand.Rand
+	count uint32
 
 	sync.Mutex
 }
 
 func NewRandom(items ...[]string) (lb *random) {
-	lb = &random{
-		r: rand.New(rand.NewSource(time.Now().UnixNano())),
-	}
+	lb = &random{}
 	if len(items) > 0 && len(items[0]) > 0 {
 		lb.Update(items[0])
 	}
@@ -59,7 +56,7 @@ func (b *random) chooseNext() string {
 	b.Lock()
 	defer b.Unlock()
 
-	return b.items[b.r.Intn(b.count)]
+	return b.items[utils.FastRandn(b.count)]
 }
 
 func (b *random) Remove(item string, asClean ...bool) (ok bool) {
@@ -67,7 +64,7 @@ func (b *random) Remove(item string, asClean ...bool) (ok bool) {
 	defer b.Unlock()
 
 	clean := len(asClean) > 0 && asClean[0]
-	for i := 0; i < b.count; i++ {
+	for i := uint32(0); i < b.count; i++ {
 		if item == b.items[i] {
 			b.items = append(b.items[:i], b.items[i+1:]...)
 			b.count--
@@ -94,8 +91,7 @@ func (b *random) removeAll() {
 	b.count = 0
 }
 
-func (b *random) Reset() {
-}
+func (b *random) Reset() {}
 
 func (b *random) Update(items interface{}) bool {
 	v, ok := items.([]string)
