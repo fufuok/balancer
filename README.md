@@ -217,21 +217,28 @@ type Balancer interface {
 ## 🤖 Benchmarks
 
 ```shell
-go test -bench=. -benchtime=1s -count=2
-goos: linux
-goarch: amd64
-pkg: github.com/fufuok/balancer
-cpu: Intel(R) Xeon(R) CPU E5-2667 v2 @ 3.30GHz
-BenchmarkWeightedRoundRobin-4           30947391                37.95 ns/op            0 B/op          0 allocs/op
-BenchmarkWeightedRoundRobin-4           30508263                48.99 ns/op            0 B/op          0 allocs/op
-BenchmarkSmoothWeightedRoundRobin-4     20379349                60.12 ns/op            0 B/op          0 allocs/op
-BenchmarkSmoothWeightedRoundRobin-4     20407590                75.66 ns/op            0 B/op          0 allocs/op
-BenchmarkConsistentHash-4               33911062                44.45 ns/op            0 B/op          0 allocs/op
-BenchmarkConsistentHash-4               34818607                44.34 ns/op            0 B/op          0 allocs/op
-BenchmarkRoundRobin-4                   51605906                23.35 ns/op            0 B/op          0 allocs/op
-BenchmarkRoundRobin-4                   50344368                29.87 ns/op            0 B/op          0 allocs/op
-BenchmarkRandomR-4                      45422324                26.06 ns/op            0 B/op          0 allocs/op
-BenchmarkRandomR-4                      46060688                32.93 ns/op            0 B/op          0 allocs/op
+// go test -run=^$ -benchmem -benchtime=1s -count=1 -bench=.
+// goos: linux
+// goarch: amd64
+// pkg: github.com/fufuok/balancer
+// cpu: Intel(R) Xeon(R) CPU E5-2667 v2 @ 3.30GHz
+// BenchmarkBalancer/WRR/10-4                              38190100                36.54 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/SWRR/10-4                             31051455                39.56 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Hash/10-4                             32343030                47.23 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/RoundRobin/10-4                       58601172                20.14 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Random/10-4                           71845088                16.46 ns/op            0 B/op          0 allocs/op
+//
+// BenchmarkBalancer/WRR#01/100-4                          33369616                34.03 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/SWRR#01/100-4                          6438565               237.5 ns/op             0 B/op          0 allocs/op
+// BenchmarkBalancer/Hash#01/100-4                         26024400                57.22 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/RoundRobin#01/100-4                   59103342                30.60 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Random#01/100-4                       70480639                16.35 ns/op            0 B/op          0 allocs/op
+//
+// BenchmarkBalancer/WRR#02/1000-4                         31300266                49.85 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/SWRR#02/1000-4                          753825              2008 ns/op               0 B/op          0 allocs/op
+// BenchmarkBalancer/Hash#02/1000-4                        20951144                56.93 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/RoundRobin#02/1000-4                  58551811                19.75 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Random#02/1000-4                      71825866                21.06 ns/op            0 B/op          0 allocs/op
 ```
 
 ## ⚠️ License
