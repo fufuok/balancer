@@ -7,14 +7,14 @@ import (
 // smooth weighted round-robin balancing
 // Ref: https://github.com/phusion/nginx/commit/27e94984486058d73157038f7950a0a36ecc6e35
 type swrr struct {
-	items []*swrrItems
+	items []*swrrItem
 	count int
 	all   map[string]int
 
 	sync.Mutex
 }
 
-type swrrItems struct {
+type swrrItem struct {
 	item          string
 	weight        int
 	currentWeight int
@@ -44,7 +44,7 @@ func (b *swrr) Add(item string, weight ...int) {
 
 func (b *swrr) add(item string, weight int) {
 	b.remove(item)
-	b.items = append(b.items, &swrrItems{
+	b.items = append(b.items, &swrrItem{
 		item:   item,
 		weight: weight,
 	})
@@ -85,7 +85,7 @@ func (b *swrr) Select(_ ...string) (item string) {
 	return
 }
 
-func (b *swrr) chooseNext() (choice *swrrItems) {
+func (b *swrr) chooseNext() (choice *swrrItem) {
 	total := 0
 	for i := range b.items {
 		c := b.items[i]
@@ -153,10 +153,10 @@ func (b *swrr) Update(items interface{}) bool {
 	}
 
 	count := len(v)
-	data := make([]*swrrItems, count)
+	data := make([]*swrrItem, count)
 	i := 0
 	for item, weight := range v {
-		data[i] = &swrrItems{
+		data[i] = &swrrItem{
 			item:   item,
 			weight: weight,
 		}

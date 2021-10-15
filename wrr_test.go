@@ -37,8 +37,8 @@ func TestWeightedRoundRobin(t *testing.T) {
 	lb = NewWeightedRoundRobin(nodes)
 	count := make(map[string]int)
 	for i := 0; i < 1000; i++ {
-		ok := lb.Select()
-		count[ok]++
+		item := lb.Select()
+		count[item]++
 	}
 	if count["A"] != 0 || count["B"] != 100 || count["C"] != 700 || count["D"] != 200 {
 		t.Fatal("wrr wrong")
@@ -48,8 +48,8 @@ func TestWeightedRoundRobin(t *testing.T) {
 
 	lb.Add("E", 10)
 	for i := 0; i < 2000; i++ {
-		ok := lb.Select()
-		count[ok]++
+		item := lb.Select()
+		count[item]++
 	}
 	if count["A"] != 0 || count["B"] != 200 || count["C"] != 1400 || count["D"] != 400 || count["E"] != 1000 {
 		t.Fatal("wrr reset() wrong")
@@ -63,8 +63,8 @@ func TestWeightedRoundRobin(t *testing.T) {
 	lb.Reset()
 
 	for i := 0; i < 1000; i++ {
-		ok := lb.Select()
-		count[ok]++
+		item := lb.Select()
+		count[item]++
 	}
 	if count["A"] != 0 || count["B"] != 300 || count["C"] != 2100 || count["D"] != 600 {
 		t.Fatal("wrr wrong")

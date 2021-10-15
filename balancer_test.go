@@ -30,7 +30,7 @@ func TestBalancer(t *testing.T) {
 		t.Fatal("balancer.New wrong")
 	}
 
-	lb.Add("A", 0)
+	lb.Add("A")
 	best := lb.Select()
 	if best != "A" {
 		t.Fatal("balancer select wrong")

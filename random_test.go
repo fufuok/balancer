@@ -9,7 +9,7 @@ import (
 
 func TestRandom(t *testing.T) {
 	lb := NewRandom()
-	item := Select()
+	item := lb.Select()
 	if item != "" {
 		t.Fatalf("r expected empty, actual %s", item)
 	}
@@ -24,8 +24,8 @@ func TestRandom(t *testing.T) {
 	lb = NewRandom(nodes)
 	count := make(map[string]int)
 	for i := 0; i < 2000; i++ {
-		ok := lb.Select()
-		count[ok]++
+		item := lb.Select()
+		count[item]++
 	}
 	if count["A"] <= 300 || count["B"] <= 300 || count["C"] <= 300 || count["D"] <= 300 {
 		t.Fatal("r wrong")

@@ -9,7 +9,7 @@ import (
 // Weighted Round-Robin Scheduling
 // Ref: http://kb.linuxvirtualserver.org/wiki/Weighted_Round-Robin_Scheduling
 type wrr struct {
-	items []*wrrItems
+	items []*wrrItem
 	i     int
 	n     int
 	cw    int
@@ -20,7 +20,7 @@ type wrr struct {
 	sync.Mutex
 }
 
-type wrrItems struct {
+type wrrItem struct {
 	item   string
 	weight int
 }
@@ -50,7 +50,7 @@ func (b *wrr) Add(item string, weight ...int) {
 func (b *wrr) add(item string, weight int) {
 	b.remove(item)
 
-	b.items = append(b.items, &wrrItems{
+	b.items = append(b.items, &wrrItem{
 		item:   item,
 		weight: weight,
 	})
@@ -109,7 +109,7 @@ func (b *wrr) Select(_ ...string) (item string) {
 	return
 }
 
-func (b *wrr) chooseNext() *wrrItems {
+func (b *wrr) chooseNext() *wrrItem {
 	for {
 		b.i = (b.i + 1) % b.n
 		if b.i == 0 {
@@ -197,12 +197,12 @@ func (b *wrr) Update(items interface{}) bool {
 	if cap(b.items) >= b.n {
 		b.items = b.items[:b.n]
 	} else {
-		b.items = make([]*wrrItems, b.n)
+		b.items = make([]*wrrItem, b.n)
 	}
 
 	i := 0
 	for item, weight := range v {
-		b.items[i] = &wrrItems{
+		b.items[i] = &wrrItem{
 			item:   item,
 			weight: weight,
 		}

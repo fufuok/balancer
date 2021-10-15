@@ -45,8 +45,8 @@ func TestRoundRobin(t *testing.T) {
 
 	count := make(map[string]int)
 	for i := 0; i < 2000; i++ {
-		ok := lb.Select()
-		count[ok]++
+		item := lb.Select()
+		count[item]++
 	}
 	if count["A"] != 500 || count["B"] != 500 || count["C"] != 500 || count["D"] != 500 {
 		t.Fatal("rr wrong")
@@ -54,8 +54,8 @@ func TestRoundRobin(t *testing.T) {
 
 	lb.Add("E", 10)
 	for i := 0; i < 1000; i++ {
-		ok := lb.Select()
-		count[ok]++
+		item := lb.Select()
+		count[item]++
 	}
 	if count["A"] != 700 || count["B"] != 700 || count["C"] != 700 || count["D"] != 700 || count["E"] != 200 {
 		t.Fatal("rr add() wrong")
@@ -66,8 +66,8 @@ func TestRoundRobin(t *testing.T) {
 		t.Fatal("rr remove() wrong")
 	}
 	for i := 0; i < 800; i++ {
-		ok := lb.Select()
-		count[ok]++
+		item := lb.Select()
+		count[item]++
 	}
 	if count["A"] != 900 || count["B"] != 900 || count["C"] != 900 || count["D"] != 900 {
 		t.Fatal("rr wrong")

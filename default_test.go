@@ -32,8 +32,8 @@ func TestDefaultBalancer(t *testing.T) {
 	Update(nodes)
 	count := make(map[string]int)
 	for i := 0; i < 1000; i++ {
-		ok := Select()
-		count[ok]++
+		item := Select()
+		count[item]++
 	}
 	if count["A"] != 0 || count["B"] != 100 || count["C"] != 700 || count["D"] != 200 {
 		t.Fatal("default balancer wrong")
@@ -43,8 +43,8 @@ func TestDefaultBalancer(t *testing.T) {
 
 	Add("E", 10)
 	for i := 0; i < 2000; i++ {
-		ok := Select()
-		count[ok]++
+		item := Select()
+		count[item]++
 	}
 	if count["A"] != 0 || count["B"] != 200 || count["C"] != 1400 || count["D"] != 400 || count["E"] != 1000 {
 		t.Fatal("default balancer reset() wrong")
@@ -58,8 +58,8 @@ func TestDefaultBalancer(t *testing.T) {
 	Reset()
 
 	for i := 0; i < 1000; i++ {
-		ok := Select()
-		count[ok]++
+		item := Select()
+		count[item]++
 	}
 	if count["A"] != 0 || count["B"] != 300 || count["C"] != 2100 || count["D"] != 600 {
 		t.Fatal("default balancer wrong")
