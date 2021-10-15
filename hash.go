@@ -29,42 +29,41 @@ func NewConsistentHash(items ...[]string) (lb *consistentHash) {
 
 func (b *consistentHash) Add(item string, _ ...int) {
 	b.Lock()
-	defer b.Unlock()
-
-	b.add(item)
-}
-
-func (b *consistentHash) add(item string) {
 	b.items = append(b.items, item)
 	b.h.Add(item)
 	b.count++
+	b.Unlock()
 }
 
 func (b *consistentHash) All() interface{} {
-	return b.items
+	all := make([]string, b.count)
+
+	b.Lock()
+	for i, v := range b.items {
+		all[i] = v
+	}
+	b.Unlock()
+
+	return all
 }
 
 func (b *consistentHash) Name() string {
 	return "ConsistentHash"
 }
 
-func (b *consistentHash) Select(key ...string) string {
+func (b *consistentHash) Select(key ...string) (item string) {
+	b.RLock()
 	switch b.count {
 	case 0:
-		return ""
+		item = ""
 	case 1:
-		return b.items[0]
+		item = b.items[0]
 	default:
-		return b.chooseNext(key)
+		hash := utils.HashString(key...)
+		item, _ = b.h.Get(hash).(string)
 	}
-}
+	b.RUnlock()
 
-func (b *consistentHash) chooseNext(key []string) (choice string) {
-	b.RLock()
-	defer b.RUnlock()
-
-	hash := utils.HashString(key...)
-	choice, _ = b.h.Get(hash).(string)
 	return
 }
 
@@ -91,19 +90,13 @@ func (b *consistentHash) Remove(item string, asClean ...bool) (ok bool) {
 
 func (b *consistentHash) RemoveAll() {
 	b.Lock()
-	defer b.Unlock()
-
-	b.removeAll()
-}
-
-func (b *consistentHash) removeAll() {
 	b.items = b.items[:0]
 	b.count = 0
 	b.h = doublejump.NewHash()
+	b.Unlock()
 }
 
-func (b *consistentHash) Reset() {
-}
+func (b *consistentHash) Reset() {}
 
 func (b *consistentHash) Update(items interface{}) bool {
 	v, ok := items.([]string)
@@ -111,14 +104,16 @@ func (b *consistentHash) Update(items interface{}) bool {
 		return false
 	}
 
-	b.Lock()
-	defer b.Unlock()
-
-	b.removeAll()
-
+	h := doublejump.NewHash()
 	for _, x := range v {
-		b.add(x)
+		h.Add(x)
 	}
+
+	b.Lock()
+	b.count = len(v)
+	b.items = v
+	b.h = h
+	b.Unlock()
 
 	return true
 }

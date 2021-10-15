@@ -23,41 +23,40 @@ func NewRoundRobin(items ...[]string) (lb *rr) {
 
 func (b *rr) Add(item string, _ ...int) {
 	b.Lock()
-	defer b.Unlock()
-
-	b.add(item)
-}
-
-func (b *rr) add(item string) {
 	b.items = append(b.items, item)
 	b.count++
+	b.Unlock()
 }
 
 func (b *rr) All() interface{} {
-	return b.items
+	all := make([]string, b.count)
+
+	b.Lock()
+	for i, v := range b.items {
+		all[i] = v
+	}
+	b.Unlock()
+
+	return all
 }
 
 func (b *rr) Name() string {
 	return "RoundRobin"
 }
 
-func (b *rr) Select(_ ...string) string {
+func (b *rr) Select(_ ...string) (item string) {
+	b.Lock()
 	switch b.count {
 	case 0:
-		return ""
+		item = ""
 	case 1:
-		return b.items[0]
+		item = b.items[0]
 	default:
-		return b.chooseNext()
+		item = b.items[b.current]
+		b.current = (b.current + 1) % b.count
 	}
-}
+	b.Unlock()
 
-func (b *rr) chooseNext() (choice string) {
-	b.Lock()
-	defer b.Unlock()
-
-	choice = b.items[b.current]
-	b.current = (b.current + 1) % b.count
 	return
 }
 
@@ -83,19 +82,16 @@ func (b *rr) Remove(item string, asClean ...bool) (ok bool) {
 
 func (b *rr) RemoveAll() {
 	b.Lock()
-	defer b.Unlock()
-
-	b.removeAll()
-}
-
-func (b *rr) removeAll() {
 	b.items = b.items[:0]
 	b.count = 0
 	b.current = 0
+	b.Unlock()
 }
 
 func (b *rr) Reset() {
+	b.Lock()
 	b.current = 0
+	b.Unlock()
 }
 
 func (b *rr) Update(items interface{}) bool {
@@ -105,13 +101,10 @@ func (b *rr) Update(items interface{}) bool {
 	}
 
 	b.Lock()
-	defer b.Unlock()
-
-	b.removeAll()
-
-	for _, x := range v {
-		b.add(x)
-	}
+	b.items = v
+	b.count = len(v)
+	b.current = 0
+	b.Unlock()
 
 	return true
 }

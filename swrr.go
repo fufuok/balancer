@@ -32,15 +32,14 @@ func NewSmoothWeightedRoundRobin(items ...map[string]int) (lb *swrr) {
 }
 
 func (b *swrr) Add(item string, weight ...int) {
-	b.Lock()
-	defer b.Unlock()
-
 	w := 1
 	if len(weight) > 0 {
 		w = weight[0]
 	}
+
+	b.Lock()
 	b.add(item, w)
-	b.all[item] = w
+	b.Unlock()
 }
 
 func (b *swrr) add(item string, weight int) {
@@ -50,34 +49,43 @@ func (b *swrr) add(item string, weight int) {
 		weight: weight,
 	})
 	b.count++
+	b.all[item] = weight
 }
 
 func (b *swrr) All() interface{} {
-	return b.all
+	all := make(map[string]int)
+
+	b.Lock()
+	for k, v := range b.all {
+		all[k] = v
+	}
+	b.Unlock()
+
+	return all
 }
 
 func (b *swrr) Name() string {
 	return "SmoothWeightedRoundRobin"
 }
 
-func (b *swrr) Select(_ ...string) string {
+func (b *swrr) Select(_ ...string) (item string) {
+	b.Lock()
 	switch b.count {
 	case 0:
-		return ""
+		item = ""
 	case 1:
 		if b.items[0].weight > 0 {
-			return b.items[0].item
+			item = b.items[0].item
 		}
-		return ""
 	default:
-		return b.chooseNext().item
+		item = b.chooseNext().item
 	}
+	b.Unlock()
+
+	return
 }
 
 func (b *swrr) chooseNext() (choice *swrrItems) {
-	b.Lock()
-	defer b.Unlock()
-
 	total := 0
 	for i := range b.items {
 		c := b.items[i]
@@ -124,24 +132,18 @@ func (b *swrr) remove(item string) (ok bool) {
 
 func (b *swrr) RemoveAll() {
 	b.Lock()
-	defer b.Unlock()
-
-	b.removeAll()
-}
-
-func (b *swrr) removeAll() {
 	b.items = b.items[:0]
 	b.count = 0
 	b.all = make(map[string]int)
+	b.Unlock()
 }
 
 func (b *swrr) Reset() {
 	b.Lock()
-	defer b.Unlock()
-
 	for i := range b.items {
 		b.items[i].currentWeight = b.items[i].weight
 	}
+	b.Unlock()
 }
 
 func (b *swrr) Update(items interface{}) bool {
@@ -150,15 +152,22 @@ func (b *swrr) Update(items interface{}) bool {
 		return false
 	}
 
-	b.Lock()
-	defer b.Unlock()
-
-	b.removeAll()
-	b.all = v
-
-	for i, w := range v {
-		b.add(i, w)
+	count := len(v)
+	data := make([]*swrrItems, count)
+	i := 0
+	for item, weight := range v {
+		data[i] = &swrrItems{
+			item:   item,
+			weight: weight,
+		}
+		i++
 	}
+
+	b.Lock()
+	b.count = count
+	b.all = v
+	b.items = data
+	b.Unlock()
 
 	return true
 }

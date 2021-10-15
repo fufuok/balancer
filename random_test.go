@@ -103,15 +103,18 @@ func TestRandom_C(t *testing.T) {
 	wg.Wait()
 
 	if atomic.LoadInt64(&a) <= 200000 {
-		t.Fatal("swrr wrong: a")
+		t.Fatal("r wrong: a")
 	}
 	if atomic.LoadInt64(&b) <= 200000 {
-		t.Fatal("swrr wrong: b")
+		t.Fatal("r wrong: b")
 	}
 	if atomic.LoadInt64(&c) <= 200000 {
-		t.Fatal("swrr wrong: c")
+		t.Fatal("r wrong: c")
 	}
 	if atomic.LoadInt64(&d) <= 200000 {
-		t.Fatal("swrr wrong: d")
+		t.Fatal("r wrong: d")
+	}
+	if atomic.LoadInt64(&a)+atomic.LoadInt64(&b)+atomic.LoadInt64(&c)+atomic.LoadInt64(&d) != 1000000 {
+		t.Fatal("r wrong: sum")
 	}
 }

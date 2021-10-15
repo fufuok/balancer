@@ -10,7 +10,7 @@ type random struct {
 	items []string
 	count uint32
 
-	sync.Mutex
+	sync.RWMutex
 }
 
 func NewRandom(items ...[]string) (lb *random) {
@@ -23,40 +23,40 @@ func NewRandom(items ...[]string) (lb *random) {
 
 func (b *random) Add(item string, _ ...int) {
 	b.Lock()
-	defer b.Unlock()
-
-	b.add(item)
-}
-
-func (b *random) add(item string) {
 	b.items = append(b.items, item)
 	b.count++
+	b.Unlock()
 }
 
 func (b *random) All() interface{} {
-	return b.items
+	all := make([]string, b.count)
+
+	b.Lock()
+	for i, v := range b.items {
+		all[i] = v
+	}
+	b.Unlock()
+
+	return all
 }
 
 func (b *random) Name() string {
 	return "Random"
 }
 
-func (b *random) Select(_ ...string) string {
+func (b *random) Select(_ ...string) (item string) {
+	b.RLock()
 	switch b.count {
 	case 0:
-		return ""
+		item = ""
 	case 1:
-		return b.items[0]
+		item = b.items[0]
 	default:
-		return b.chooseNext()
+		item = b.items[utils.FastRandn(b.count)]
 	}
-}
+	b.RUnlock()
 
-func (b *random) chooseNext() string {
-	b.Lock()
-	defer b.Unlock()
-
-	return b.items[utils.FastRandn(b.count)]
+	return
 }
 
 func (b *random) Remove(item string, asClean ...bool) (ok bool) {
@@ -81,14 +81,9 @@ func (b *random) Remove(item string, asClean ...bool) (ok bool) {
 
 func (b *random) RemoveAll() {
 	b.Lock()
-	defer b.Unlock()
-
-	b.removeAll()
-}
-
-func (b *random) removeAll() {
 	b.items = b.items[:0]
 	b.count = 0
+	b.Unlock()
 }
 
 func (b *random) Reset() {}
@@ -100,13 +95,9 @@ func (b *random) Update(items interface{}) bool {
 	}
 
 	b.Lock()
-	defer b.Unlock()
-
-	b.removeAll()
-
-	for _, x := range v {
-		b.add(x)
-	}
+	b.items = v
+	b.count = uint32(len(v))
+	b.Unlock()
 
 	return true
 }
