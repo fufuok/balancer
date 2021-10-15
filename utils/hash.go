@@ -10,7 +10,7 @@ func HashString(s ...string) uint64 {
 	return Sum64(AddString(s...))
 }
 
-// Sum64 similar to fnv.New64a().Sum64, but faster.
+// Sum64 similar to fnv.New64a().Sum64(), but faster.
 func Sum64(s string) uint64 {
 	var h uint64 = offset64
 	for i := 0; i < len(s); i++ {

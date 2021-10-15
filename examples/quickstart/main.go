@@ -19,4 +19,5 @@ func main() {
 	for i := 0; i < 9; i++ {
 		fmt.Print(balancer.Select(), " ")
 	}
+	fmt.Println()
 }

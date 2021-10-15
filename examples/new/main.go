@@ -37,6 +37,7 @@ func main() {
 	for i := 0; i < 7; i++ {
 		fmt.Print(lb.Select(), " ")
 	}
+	fmt.Println()
 
 	// same effect
 	lb = balancer.New(balancer.SmoothWeightedRoundRobin, nil, nil)
