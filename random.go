@@ -6,6 +6,7 @@ import (
 	"github.com/fufuok/balancer/utils"
 )
 
+// Random
 type random struct {
 	items []string
 	count uint32

@@ -38,6 +38,7 @@ func Reset() {
 	DefaultBalancer.Reset()
 }
 
+// Update reinitialize the balancer items.
 func Update(items interface{}) bool {
 	return DefaultBalancer.Update(items)
 }

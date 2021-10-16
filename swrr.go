@@ -4,7 +4,7 @@ import (
 	"sync"
 )
 
-// smooth weighted round-robin balancing
+// Smooth weighted round-robin balancing
 // Ref: https://github.com/phusion/nginx/commit/27e94984486058d73157038f7950a0a36ecc6e35
 type swrr struct {
 	items []*swrrItem

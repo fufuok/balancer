@@ -40,20 +40,19 @@ func TestRandom(t *testing.T) {
 	lb.Add("A")
 	all := lb.All().([]string)
 	if strings.Join(all, "") != "ABCDAACA" {
-		t.Fatalf("hash all() wrong")
+		t.Fatal("r all() wrong")
 	}
 
 	lb.Remove("C")
 	all = lb.All().([]string)
 	if strings.Join(all, "") != "ABDAACA" {
-		t.Fatalf("hash all() wrong")
+		t.Fatal("r all() wrong")
 	}
 
 	lb.Remove("A", true)
 	all = lb.All().([]string)
 	if strings.Join(all, "") != "BDC" {
-		t.Log(all)
-		t.Fatalf("hash all() wrong")
+		t.Fatal("r all() wrong")
 	}
 
 	lb.RemoveAll()

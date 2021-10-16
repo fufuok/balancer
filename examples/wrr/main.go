@@ -41,7 +41,8 @@ func main() {
 	// reinitialize the balancer items
 	lb.Update(wNodes)
 
-	// when the weight difference is large, it is not smooth: E E E E E C D E E E E E C D
+	// when the weight difference is large, it is not smooth
+	// the result is similar to: E E E E E C D E E E E E C D
 	for i := 0; i < 14; i++ {
 		fmt.Print(lb.Select(), " ")
 	}

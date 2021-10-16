@@ -49,6 +49,7 @@ func main() {
 	for i := 0; i < 9; i++ {
 		fmt.Print(balancer.Select(), " ")
 	}
+	fmt.Println()
 }
 ```
 
@@ -84,7 +85,7 @@ nodes := []string{"A", "B", "C"}
 2. use WeightedRoundRobin (WRR)
 
    ```go
-   var lb Balancer
+   var lb balancer.Balancer
    lb = balancer.New(balancer.WeightedRoundRobin, wNodes, nil)
    
    // or
@@ -102,7 +103,7 @@ nodes := []string{"A", "B", "C"}
 3. use SmoothWeightedRoundRobin (SWRR)
 
    ```go
-   var lb Balancer
+   var lb balancer.Balancer
    lb = balancer.New(balancer.SmoothWeightedRoundRobin, wNodes, nil)
    
    // or
@@ -120,7 +121,7 @@ nodes := []string{"A", "B", "C"}
 4. use WeightedRand (WR)
 
    ```go
-   var lb Balancer
+   var lb balancer.Balancer
    lb = balancer.New(balancer.WeightedRand, wNodes, nil)
    
    // or
@@ -138,7 +139,7 @@ nodes := []string{"A", "B", "C"}
 5. use ConsistentHash
 
    ```go
-   var lb Balancer
+   var lb balancer.Balancer
    lb = balancer.New(balancer.ConsistentHash, nil, nodes)
    
    // or
@@ -156,7 +157,7 @@ nodes := []string{"A", "B", "C"}
 6. use RoundRobin (RR)
 
    ```go
-   var lb Balancer
+   var lb balancer.Balancer
    lb = balancer.New(balancer.RoundRobin, nil, nodes)
    
    // or
@@ -174,7 +175,7 @@ nodes := []string{"A", "B", "C"}
 7. use Random
 
    ```go
-   var lb Balancer
+   var lb balancer.Balancer
    lb = balancer.New(balancer.Random, nil, nodes)
    
    // or
@@ -255,14 +256,14 @@ BenchmarkBalancer/RoundRobin/10-4                       53076963                
 BenchmarkBalancer/Random/10-4                           64582524                18.02 ns/op            0 B/op          0 allocs/op
 
 BenchmarkBalancer/WRR#01/100-4                          32221255                37.31 ns/op            0 B/op          0 allocs/op
-BenchmarkBalancer/SWRR#01/100-4                          7337542               165.6 ns/op             0 B/op          0 allocs/op
+BenchmarkBalancer/SWRR#01/100-4                          7337542                165.6 ns/op            0 B/op          0 allocs/op
 BenchmarkBalancer/WR#01/100-4                           21253034                53.29 ns/op            0 B/op          0 allocs/op
 BenchmarkBalancer/Hash#01/100-4                         25851721                46.58 ns/op            0 B/op          0 allocs/op
 BenchmarkBalancer/RoundRobin#01/100-4                   51670482                22.59 ns/op            0 B/op          0 allocs/op
 BenchmarkBalancer/Random#01/100-4                       66175606                18.14 ns/op            0 B/op          0 allocs/op
 
 BenchmarkBalancer/WRR#02/1000-4                         28502208                42.09 ns/op            0 B/op          0 allocs/op
-BenchmarkBalancer/SWRR#02/1000-4                          872499              1391 ns/op               0 B/op          0 allocs/op
+BenchmarkBalancer/SWRR#02/1000-4                          872499                 1391 ns/op            0 B/op          0 allocs/op
 BenchmarkBalancer/WR#02/1000-4                          16595787                71.57 ns/op            0 B/op          0 allocs/op
 BenchmarkBalancer/Hash#02/1000-4                        19103568                63.47 ns/op            0 B/op          0 allocs/op
 BenchmarkBalancer/RoundRobin#02/1000-4                  52725135                23.05 ns/op            0 B/op          0 allocs/op

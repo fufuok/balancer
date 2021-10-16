@@ -13,7 +13,7 @@ func main() {
 	fmt.Println("balancer name:", lb.Name())
 
 	// random
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 9; i++ {
 		fmt.Print(lb.Select(), " ")
 	}
 	fmt.Println()

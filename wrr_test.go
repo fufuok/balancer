@@ -88,7 +88,7 @@ func TestWeightedRoundRobin(t *testing.T) {
 	}
 	all, ok = lb.All().(map[string]int)
 	if !ok || all["Y"] != 1 {
-		t.Fatal("swrr all() wrong")
+		t.Fatal("wrr all() wrong")
 	}
 	item = lb.Select()
 	if item != "Y" {

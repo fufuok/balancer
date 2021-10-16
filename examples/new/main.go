@@ -9,7 +9,7 @@ import (
 func main() {
 	var lb balancer.Balancer
 
-	// SmoothWeightedRoundRobin and WeightedRoundRobin use map[string]int
+	// SmoothWeightedRoundRobin / WeightedRoundRobin / WeightedRand use map[string]int
 	wNodes := map[string]int{
 		"A": 5,
 		"B": 1,
@@ -19,8 +19,17 @@ func main() {
 	lb = balancer.New(balancer.WeightedRoundRobin, wNodes, nil)
 	fmt.Println("balancer name:", lb.Name())
 
+	lb = balancer.New(balancer.WeightedRand, wNodes, nil)
+	fmt.Println("balancer name:", lb.Name())
+
 	lb = balancer.New(balancer.SmoothWeightedRoundRobin, wNodes, nil)
 	fmt.Println("balancer name:", lb.Name())
+
+	// result of smooth selection is similar to: A A C A B A A
+	for i := 0; i < 7; i++ {
+		fmt.Print(lb.Select(), " ")
+	}
+	fmt.Println()
 
 	// RoundRobin / Random / ConsistentHash use []string
 	nodes := []string{"A", "B", "C"}
