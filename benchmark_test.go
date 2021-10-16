@@ -41,6 +41,20 @@ func BenchmarkBalancer(b *testing.B) {
 			})
 		})
 
+		b.Run("WR", func(b *testing.B) {
+			b.Run(strconv.Itoa(n), func(b *testing.B) {
+				items := genItemsMap(n)
+				lb := NewWeightedRand(items)
+				for i := 0; i < 1000; i++ {
+					lb.Select()
+				}
+				b.ResetTimer()
+				for i := 0; i < b.N; i++ {
+					lb.Select()
+				}
+			})
+		})
+
 		b.Run("Hash", func(b *testing.B) {
 			b.Run(strconv.Itoa(n), func(b *testing.B) {
 				items := genItemsSlice(n)
@@ -107,6 +121,22 @@ func BenchmarkBalancerParallel(b *testing.B) {
 			b.Run(strconv.Itoa(n), func(b *testing.B) {
 				items := genItemsMap(n)
 				lb := NewSmoothWeightedRoundRobin(items)
+				for i := 0; i < 1000; i++ {
+					lb.Select()
+				}
+				b.ResetTimer()
+				b.RunParallel(func(pb *testing.PB) {
+					for pb.Next() {
+						lb.Select()
+					}
+				})
+			})
+		})
+
+		b.Run("WR", func(b *testing.B) {
+			b.Run(strconv.Itoa(n), func(b *testing.B) {
+				items := genItemsMap(n)
+				lb := NewWeightedRand(items)
 				for i := 0; i < 1000; i++ {
 					lb.Select()
 				}
@@ -188,75 +218,87 @@ func genItemsSlice(n int) (items []string) {
 // goos: linux
 // goarch: amd64
 // pkg: github.com/fufuok/balancer
-// cpu: Intel(R) Xeon(R) CPU E5-2667 v2 @ 3.30GHz
-// BenchmarkBalancer/WRR/10-4                              38190100                36.54 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/SWRR/10-4                             31051455                39.56 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/Hash/10-4                             32343030                47.23 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/RoundRobin/10-4                       58601172                20.14 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/Random/10-4                           71845088                16.46 ns/op            0 B/op          0 allocs/op
+// cpu: Intel(R) Xeon(R) Gold 6151 CPU @ 3.00GHz
+// BenchmarkBalancer/WRR/10-4                              37112553                30.34 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/SWRR/10-4                             38851680                30.39 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/WR/10-4                               36406916                33.15 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Hash/10-4                             31506262                37.60 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/RoundRobin/10-4                       53076963                23.86 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Random/10-4                           64582524                18.02 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancer/WRR#01/100-4                          33369616                34.03 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/SWRR#01/100-4                          6438565               237.5 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancer/Hash#01/100-4                         26024400                57.22 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/RoundRobin#01/100-4                   59103342                30.60 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/Random#01/100-4                       70480639                16.35 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/WRR#01/100-4                          32221255                37.31 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/SWRR#01/100-4                          7337542               165.6 ns/op             0 B/op          0 allocs/op
+// BenchmarkBalancer/WR#01/100-4                           21253034                53.29 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Hash#01/100-4                         25851721                46.58 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/RoundRobin#01/100-4                   51670482                22.59 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Random#01/100-4                       66175606                18.14 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancer/WRR#02/1000-4                         31300266                49.85 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/SWRR#02/1000-4                          753825              2008 ns/op               0 B/op          0 allocs/op
-// BenchmarkBalancer/Hash#02/1000-4                        20951144                56.93 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/RoundRobin#02/1000-4                  58551811                19.75 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/Random#02/1000-4                      71825866                21.06 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/WRR#02/1000-4                         28502208                42.09 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/SWRR#02/1000-4                          872499              1391 ns/op               0 B/op          0 allocs/op
+// BenchmarkBalancer/WR#02/1000-4                          16595787                71.57 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Hash#02/1000-4                        19103568                63.47 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/RoundRobin#02/1000-4                  52725135                23.05 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Random#02/1000-4                      66541184                18.24 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancer/WRR#03/10000-4                        31281838                49.10 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/SWRR#03/10000-4                          60955             24994 ns/op               0 B/op          0 allocs/op
-// BenchmarkBalancer/Hash#03/10000-4                       17948910                65.05 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/RoundRobin#03/10000-4                 59174136                19.91 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/Random#03/10000-4                     71194105                21.20 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/WRR#03/10000-4                        27912939                42.67 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/SWRR#03/10000-4                          86983             14019 ns/op               0 B/op          0 allocs/op
+// BenchmarkBalancer/WR#03/10000-4                         12691062                92.73 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Hash#03/10000-4                       16084016                73.96 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/RoundRobin#03/10000-4                 52327888                24.05 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Random#03/10000-4                     66457050                18.17 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancer/WRR#04/100000-4                       27980596                51.19 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/SWRR#04/100000-4                          5926            228089 ns/op               0 B/op          0 allocs/op
-// BenchmarkBalancer/Hash#04/100000-4                      18386246                83.29 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/RoundRobin#04/100000-4                59072595                31.17 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/Random#04/100000-4                    72389031                16.41 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/WRR#04/100000-4                       24896972                43.20 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/SWRR#04/100000-4                          7046            173884 ns/op               0 B/op          0 allocs/op
+// BenchmarkBalancer/WR#04/100000-4                         9491140               127.3 ns/op             0 B/op          0 allocs/op
+// BenchmarkBalancer/Hash#04/100000-4                      16090567                76.46 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/RoundRobin#04/100000-4                49422337                24.06 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Random#04/100000-4                    62700792                18.52 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancer/WRR#05/1000000-4                      12541518                90.22 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/SWRR#05/1000000-4                          332           3611514 ns/op               0 B/op          0 allocs/op
-// BenchmarkBalancer/Hash#05/1000000-4                     18413552                70.58 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/RoundRobin#05/1000000-4               17556219                60.58 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancer/Random#05/1000000-4                   36476977                29.91 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/WRR#05/1000000-4                      24038544                47.01 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/SWRR#05/1000000-4                          381           3108476 ns/op               0 B/op          0 allocs/op
+// BenchmarkBalancer/WR#05/1000000-4                        4863207               259.8 ns/op             0 B/op          0 allocs/op
+// BenchmarkBalancer/Hash#05/1000000-4                     16194163                74.15 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/RoundRobin#05/1000000-4               52971156                22.70 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancer/Random#05/1000000-4                   40018782                26.25 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancerParallel/WRR/10-4                      12844932               305.4 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/SWRR/10-4                      3143989               411.2 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Hash/10-4                     16331000                72.65 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/RoundRobin/10-4               11692734               205.8 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Random/10-4                   21195294                55.94 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WRR/10-4                      12663168                92.42 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/SWRR/10-4                     12709807                94.45 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WR/10-4                       28055660                68.66 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Hash/10-4                     16188872                72.30 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/RoundRobin/10-4               13612167                91.14 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Random/10-4                   17698065                67.72 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancerParallel/WRR#01/100-4                  13749801               261.5 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/SWRR#01/100-4                  1890832               630.9 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Hash#01/100-4                 16473523                72.75 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/RoundRobin#01/100-4           11893130               238.4 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Random#01/100-4               20649256                58.01 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WRR#01/100-4                  13133222                88.99 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/SWRR#01/100-4                  6563328               181.4 ns/op             0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WR#01/100-4                   26578320                79.94 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Hash#01/100-4                 16083211                74.67 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/RoundRobin#01/100-4           12263182                91.64 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Random#01/100-4               17741816                67.81 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancerParallel/WRR#02/1000-4                 11632530               208.0 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/SWRR#02/1000-4                  232335              5108 ns/op               0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Hash#02/1000-4                17453338                68.80 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/RoundRobin#02/1000-4          12115618               192.4 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Random#02/1000-4              21093782                56.78 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WRR#02/1000-4                 11212780               104.0 ns/op             0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/SWRR#02/1000-4                  805879              1474 ns/op               0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WR#02/1000-4                  15821539                72.37 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Hash#02/1000-4                14478384                81.82 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/RoundRobin#02/1000-4          12103447                88.15 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Random#02/1000-4              17729145                67.81 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancerParallel/WRR#03/10000-4                11394490               283.3 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/SWRR#03/10000-4                  17031             69365 ns/op               0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Hash#03/10000-4               16612495                72.17 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/RoundRobin#03/10000-4         12598099               225.0 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Random#03/10000-4             20785418                57.34 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WRR#03/10000-4                10567130               105.9 ns/op             0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/SWRR#03/10000-4                  81170             14685 ns/op               0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WR#03/10000-4                 14379578                78.16 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Hash#03/10000-4               14215629                84.50 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/RoundRobin#03/10000-4         13372892                90.45 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Random#03/10000-4             17676268                67.92 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancerParallel/WRR#04/100000-4               11428856               339.9 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/SWRR#04/100000-4                  5629            213868 ns/op               1 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Hash#04/100000-4              17755728                86.29 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/RoundRobin#04/100000-4        12290454               217.1 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Random#04/100000-4            22997978                51.96 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WRR#04/100000-4               11561236               110.4 ns/op             0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/SWRR#04/100000-4                  6835            175792 ns/op               0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WR#04/100000-4                22145756                54.60 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Hash#04/100000-4              14285690                84.04 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/RoundRobin#04/100000-4        12744205                90.57 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Random#04/100000-4            17859376                67.19 ns/op            0 B/op          0 allocs/op
 //
-// BenchmarkBalancerParallel/WRR#05/1000000-4               3110058               419.4 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/SWRR#05/1000000-4                  337           3573590 ns/op               4 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Hash#05/1000000-4             17034688                65.07 ns/op            0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/RoundRobin#05/1000000-4       13031574               252.0 ns/op             0 B/op          0 allocs/op
-// BenchmarkBalancerParallel/Random#05/1000000-4           23596234                50.20 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WRR#05/1000000-4              11473530               109.0 ns/op             0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/SWRR#05/1000000-4                  379           3127391 ns/op               7 B/op          0 allocs/op
+// BenchmarkBalancerParallel/WR#05/1000000-4               10868928               100.4 ns/op             0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Hash#05/1000000-4             14018941                85.23 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/RoundRobin#05/1000000-4       11614006                87.05 ns/op            0 B/op          0 allocs/op
+// BenchmarkBalancerParallel/Random#05/1000000-4           17565664                68.35 ns/op            0 B/op          0 allocs/op

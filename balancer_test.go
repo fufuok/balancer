@@ -15,6 +15,11 @@ func TestBalancer(t *testing.T) {
 		t.Fatal("balancer.New wrong")
 	}
 
+	lb = New(WeightedRand, nil, nil)
+	if lb.Name() != "WeightedRand" {
+		t.Fatal("balancer.New wrong")
+	}
+
 	lb = New(ConsistentHash, nil, nil)
 	if lb.Name() != "ConsistentHash" {
 		t.Fatal("balancer.New wrong")

@@ -2,12 +2,12 @@ package balancer
 
 type Balancer interface {
 	// Add add an item to be selected.
-	// weight is only used for WeightedRoundRobin/SmoothWeightedRoundRobin, default: 1
+	// weight is only used for WeightedRoundRobin/SmoothWeightedRoundRobin/WeightedRand, default: 1
 	Add(item string, weight ...int)
 
 	// All get all items.
 	// RoundRobin/Random/ConsistentHash: []string
-	// WeightedRoundRobin/SmoothWeightedRoundRobin: map[string]int
+	// WeightedRoundRobin/SmoothWeightedRoundRobin/WeightedRand: map[string]int
 	All() interface{}
 
 	// Select gets next selected item.
@@ -29,7 +29,7 @@ type Balancer interface {
 
 	// Update reinitialize the balancer items.
 	// RoundRobin/Random/ConsistentHash: []string
-	// WeightedRoundRobin/SmoothWeightedRoundRobin: map[string]int
+	// WeightedRoundRobin/SmoothWeightedRoundRobin/WeightedRand: map[string]int
 	Update(items interface{}) bool
 }
 
@@ -40,6 +40,7 @@ const (
 	// WeightedRoundRobin is the default balancer algorithm.
 	WeightedRoundRobin Mode = iota
 	SmoothWeightedRoundRobin
+	WeightedRand
 	ConsistentHash
 	RoundRobin
 	Random
@@ -47,15 +48,17 @@ const (
 
 // New create a balancer with or without items.
 // RoundRobin/Random/ConsistentHash: []string
-// WeightedRoundRobin/SmoothWeightedRoundRobin: map[string]int
+// WeightedRoundRobin/SmoothWeightedRoundRobin/WeightedRand: map[string]int
 func New(b Mode, itemsMap map[string]int, itemsList []string) Balancer {
 	switch b {
 	case SmoothWeightedRoundRobin:
 		return NewSmoothWeightedRoundRobin(itemsMap)
-	case RoundRobin:
-		return NewRoundRobin(itemsList)
+	case WeightedRand:
+		return NewWeightedRand(itemsMap)
 	case ConsistentHash:
 		return NewConsistentHash(itemsList)
+	case RoundRobin:
+		return NewRoundRobin(itemsList)
 	case Random:
 		return NewRandom(itemsList)
 	default:
