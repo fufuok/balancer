@@ -46,6 +46,25 @@ const (
 	Random
 )
 
+func (m Mode) String() string {
+	switch m {
+	case WeightedRoundRobin:
+		return "WeightedRoundRobin"
+	case SmoothWeightedRoundRobin:
+		return "SmoothWeightedRoundRobin"
+	case WeightedRand:
+		return "WeightedRand"
+	case ConsistentHash:
+		return "ConsistentHash"
+	case RoundRobin:
+		return "RoundRobin"
+	case Random:
+		return "Random"
+	default:
+		return ""
+	}
+}
+
 // New create a balancer with or without items.
 // RoundRobin/Random/ConsistentHash: []string
 // WeightedRoundRobin/SmoothWeightedRoundRobin/WeightedRand: map[string]int
